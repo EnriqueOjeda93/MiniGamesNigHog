@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player1 : MonoBehaviour
 {
 
     private float move;
@@ -22,10 +22,10 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        move = Input.GetAxis("Horizontal");
-
+        move = Input.GetAxis("Horizontal2");
+Debug.Log(move);
         if(move < 0) transform.localRotation = Quaternion.Euler(0, 180, 0); else if(move > 0) transform.localRotation = Quaternion.Euler(0, 0, 0); 
-        if(move != 0 && Input.GetAxis("Fire2") == 0  && Input.GetAxis("Fire3") == 0) {
+        if(move != 0 && Input.GetKey("[5]") && Input.GetKey("[6]")) {
             anim.SetBool("Attack2", false);
             anim.SetBool("Attack1", false);
             anim.SetBool("Walk", true); 
@@ -37,7 +37,7 @@ public class Player : MonoBehaviour
                 anim.SetBool("Run", false);
             }*/
 
-            if(Input.GetAxis("Jump") != 0){
+            if(Input.GetKey("[7]")){
                 transform.Translate(Mathf.Abs(move)*speed*0.5f*Time.deltaTime,0,0);
                 anim.SetBool("Attack3", true);
             }else{
@@ -49,16 +49,16 @@ public class Player : MonoBehaviour
             //anim.SetBool("Run", false);
             anim.SetBool("Attack3", false);
             anim.SetBool("Walk", false);
-            if(Input.GetAxis("Fire3") != 0 && ground) anim.SetBool("Attack1", true); else anim.SetBool("Attack1", false);
+            if(Input.GetKey("[5]") && ground) anim.SetBool("Attack1", true); else anim.SetBool("Attack1", false);
 
-            if(Input.GetAxis("Fire2") != 0 && ground) anim.SetBool("Attack2", true); else anim.SetBool("Attack2", false);
+            if(Input.GetKey("[6]") && ground) anim.SetBool("Attack2", true); else anim.SetBool("Attack2", false);
             
         }        
     }
 
     void FixedUpdate(){
 
-        if(Input.GetAxis("Fire1") != 0 && ground){
+        if(Input.GetKey("[4]") && ground){
             rb.AddForce(Vector2.up*200*Time.fixedDeltaTime, ForceMode2D.Impulse);
             ground = false;
             anim.SetBool("Jump", true);
