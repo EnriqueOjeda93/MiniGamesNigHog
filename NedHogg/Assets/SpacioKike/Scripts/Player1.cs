@@ -25,6 +25,9 @@ public class Player1 : MonoBehaviour
     [SerializeField]
     private GameObject player;
 
+    [SerializeField]
+    private float forceJump = 450;
+
     void Start()
     {
         anim = GetComponentInChildren<Animator>();
@@ -69,29 +72,28 @@ public class Player1 : MonoBehaviour
     void FixedUpdate(){
 
         if(Input.GetKey("[4]") && ground){
-            rb.AddForce(Vector2.up*200*Time.fixedDeltaTime, ForceMode2D.Impulse);
+            rb.AddForce(Vector2.up*forceJump*Time.fixedDeltaTime, ForceMode2D.Impulse);
             ground = false;
             anim.SetBool("Jump", true);
         }  
     }
 
-
-    void OnCollisionEnter2D(Collision2D other) {
-        if(other.gameObject.tag == "ground"){
-            ground = true;
-            anim.SetBool("Jump", false);
-        }
-    }
-    
-
-    void OnCollisionExit2D(Collision2D other) {
+void OnTriggerExit2D(Collider2D other) {
         if(other.gameObject.tag == "ground"){
         ground = false;
         }
     }
+    
 
     void OnTriggerEnter2D(Collider2D other)
     {
+
+        if(other.gameObject.tag == "ground"){
+            ground = true;
+            anim.SetBool("Jump", false);
+        }
+
+        
         if(other.gameObject.tag == "Axe"){
             
             anim.SetBool("Reborn", false);

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Axe : MonoBehaviour
 {
     [SerializeField]
-    private Player player;
+    private PlayerMovement player;
     private GameObject playerGameObject;
     private Animator anim;
     private bool impulse = true;
@@ -13,13 +13,13 @@ public class Axe : MonoBehaviour
     void Start()
     {
         playerGameObject = GameObject.FindGameObjectWithTag("Player");
-        player = playerGameObject.GetComponent<Player>();
+        player = playerGameObject.GetComponent<PlayerMovement>();
         anim = GetComponent<Animator>();
         rgb = GetComponent<Rigidbody2D>();
 
 
-        if(player.getDirection() > 0) rgb.AddForce(new Vector2(1f,0.7f)*100*Time.fixedDeltaTime, ForceMode2D.Impulse);
-            else if(player.getDirection() < 0) rgb.AddForce(new Vector2(-1f,0.7f)*100*Time.fixedDeltaTime, ForceMode2D.Impulse);
+        if(player.getDirection() > 0) rgb.AddForce(new Vector2(1f,0.7f)*200*Time.fixedDeltaTime, ForceMode2D.Impulse);
+            else if(player.getDirection() < 0) rgb.AddForce(new Vector2(-1f,0.7f)*200*Time.fixedDeltaTime, ForceMode2D.Impulse);
         
     }
 
