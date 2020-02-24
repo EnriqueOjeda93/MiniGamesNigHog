@@ -39,7 +39,15 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private CameraScript cameraState;
 
-    private Vector2 refPlayerReborn;
+    [SerializeField]
+    private GameObject paredIzq;
+    [SerializeField]
+    private GameObject paredDer;
+
+    private bool initPaded = false;
+
+    [SerializeField]
+    private GameObject boxDamg;
     void Start()
     {
         anim = GetComponentInChildren<Animator>();
@@ -64,17 +72,29 @@ public class PlayerMovement : MonoBehaviour
                 
                 transform.Translate(Mathf.Abs(move)*speed*Time.deltaTime,0,0);
 
-                if(player.GetButton("Attack1") && ground) anim.SetBool("Attack3", true); else anim.SetBool("Attack3", false);
+                if(player.GetButton("Attack1") && ground) {
+                    anim.SetBool("Attack3", true); 
+                    boxDamg.SetActive(true);
+                } else {
+                    boxDamg.SetActive(false);
+                    anim.SetBool("Attack3", false);
+                }
 
             }else {
                 anim.SetBool("Walk", false);
 
-                if(player.GetButton("Attack1") && ground) anim.SetBool("Attack2", true); else anim.SetBool("Attack2", false);
-                
+                if(player.GetButton("Attack1") && ground) {
+                    anim.SetBool("Attack2", true); 
+                    boxDamg.SetActive(true);
+                    } else {
+                        boxDamg.SetActive(false);
+                        anim.SetBool("Attack2", false);
+                    }
             }        
 
             if(!ground && anim.GetBool("Jump") == true && player.GetButton("Attack1")){
                 anim.SetBool("Attack1", true);
+                boxDamg.SetActive(true);
             }
 
             if(player.GetButtonDown("Lanzar") && (Time.time > timepoLanzamiento+tiempo)){
@@ -112,6 +132,7 @@ public class PlayerMovement : MonoBehaviour
 
         if(other.gameObject.tag == "ground"){
             ground = true;
+            boxDamg.SetActive(false);
             anim.SetBool("Attack1", false);
             anim.SetBool("Jump", false);
         }
@@ -119,39 +140,57 @@ public class PlayerMovement : MonoBehaviour
 
         if(other.gameObject.tag == "Sword" && playerId == 0){
             
-            cameraState.setPly2Winning(true);
-            cameraState.setPly1Winning(false);
-
-            refPlayerReborn = GameObject.FindGameObjectWithTag("Player2").GetComponent<Transform>().position;
-            anim.SetBool("Reborn", false);
-            // animacion die
-            dead = true;
-            anim.SetBool("Dead", true);
-            // eseramos un poco y lo transladamos fuera de la pantlla
-            Invoke("goZonaDescanso", 1f);
-            // lo recolocamos en la direccion "X" de su defensa con respecto al otro jugador
-            Invoke("Reborn", 4f);
+            paredIzq.SetActive(false);
+            paredDer.SetActive(true);
+            initPaded = true;
+            configureDead(false, true);
         }
 
         if(other.gameObject.tag == "Axe" && playerId == 1){
-            
-            cameraState.setPly1Winning(true);
-            cameraState.setPly2Winning(false);
+            paredDer.SetActive(false);
+            paredIzq.SetActive(true);
+            initPaded = true;
+            configureDead(true, false);
+        }
 
-            refPlayerReborn = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>().position;
-            anim.SetBool("Reborn", false);
-            // animacion die
-            dead = true;
-            anim.SetBool("Dead", true);
-            // eseramos un poco y lo transladamos fuera de la pantlla
-            Invoke("goZonaDescanso", 1f);
-            // lo recolocamos en la direccion "X" de su defensa con respecto al otro jugador
-            Invoke("Reborn", 4f);
+        if(other.gameObject.tag == "PaderDer" && playerId == 0 && initPaded){
+            initPaded = true;
+            configureDead(false, true);
+        }
+
+        if(other.gameObject.tag == "ParedIzq" && playerId == 1 && initPaded){
+            configureDead(true, false);
+        }
+
+        if(other.gameObject.tag == "Empty"){
+            
+            if(playerId == 1 && !GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>().getDead()){
+                initPaded = true;
+                paredDer.SetActive(false);
+                paredIzq.SetActive(true);
+                configureDead(true, false);
+
+            } else if(playerId == 0 && !GameObject.FindGameObjectWithTag("Player2").GetComponent<PlayerMovement>().getDead()){
+                initPaded = true;
+                paredDer.SetActive(true);
+                paredIzq.SetActive(false);
+               configureDead(false, true);
+
+            } else {
+                initPaded = false;
+                configureDead(false, false);
+                paredDer.SetActive(true);
+                paredIzq.SetActive(true);
+            }
         }
     }
 
     public int getDirection(){
         return direction;
+    }
+
+    public bool getDead(){
+        return dead;
     }
 
     private void goZonaDescanso(){
@@ -164,10 +203,24 @@ public class PlayerMovement : MonoBehaviour
         dead = false;
         anim.SetBool("Reborn", true);
         if(playerId == 0){
-            transform.position = new Vector2(refPlayerReborn.x - 2f, 0);
+            transform.position = new Vector2(GameObject.FindGameObjectWithTag("Player2").GetComponent<Transform>().position.x - 7f, 0);
         } else if(playerId == 1){
-            transform.position = new Vector2(refPlayerReborn.x + 2f, 0);
+            transform.position = new Vector2(GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>().position.x + 7f, 0);
+        } else {
+            transform.position = this.transform.position;
         }
+    }
+
+    private void configureDead(bool winP1, bool winP2){
+        cameraState.setPly1Winning(winP1);
+        cameraState.setPly2Winning(winP2);
+
+        anim.SetBool("Reborn", false);
+        dead = true;
+        anim.SetBool("Dead", true);
+        Invoke("goZonaDescanso", 1f);
+        
+        Invoke("Reborn", 4f);
 
     }
 

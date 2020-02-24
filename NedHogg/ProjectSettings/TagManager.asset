@@ -9,6 +9,9 @@ TagManager:
   - Sword
   - Axe
   - Win
+  - Empty
+  - ParedDer
+  - ParedIzq
   layers:
   - Default
   - TransparentFX
