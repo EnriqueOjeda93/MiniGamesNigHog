@@ -10,6 +10,7 @@ public class Axe : MonoBehaviour
     private Animator anim;
     private bool impulse = true;
     Rigidbody2D rgb;
+    private int forzeArm = 300;
     void Start()
     {
         playerGameObject = GameObject.FindGameObjectWithTag("Player");
@@ -18,8 +19,8 @@ public class Axe : MonoBehaviour
         rgb = GetComponent<Rigidbody2D>();
 
 
-        if(player.getDirection() > 0) rgb.AddForce(new Vector2(1f,0.7f)*200*Time.fixedDeltaTime, ForceMode2D.Impulse);
-            else if(player.getDirection() < 0) rgb.AddForce(new Vector2(-1f,0.7f)*200*Time.fixedDeltaTime, ForceMode2D.Impulse);
+        if(player.getDirection() > 0) rgb.AddForce(new Vector2(1f,0.7f)*forzeArm*Time.fixedDeltaTime, ForceMode2D.Impulse);
+            else if(player.getDirection() < 0) rgb.AddForce(new Vector2(-1f,0.7f)*forzeArm*Time.fixedDeltaTime, ForceMode2D.Impulse);
         
     }
 

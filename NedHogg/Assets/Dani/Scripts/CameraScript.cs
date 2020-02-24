@@ -4,25 +4,25 @@ using UnityEngine;
 
 public class CameraScript : MonoBehaviour
 {
-    private Transform Player1;
-    private Transform Player2;
+    private Transform player1;
+    private Transform player2;
 
-    private Player1 PlayerScript1;
-    private Player1 PlayerScript2;
+    private PlayerMovement playerScript1;
+    private PlayerMovement playerScript2;
 
     bool ply1Winning = false;
     bool ply2Winning = false;
-
-    float smoothSpeed = 0.125f;
+    [SerializeField]
+    float smoothSpeed = 0.325f;
 
     
     void Start()
     {
-        Player1 = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
-        Player2 = GameObject.FindGameObjectWithTag("Player2").GetComponent<Transform>();
+        player1 = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+        player2 = GameObject.FindGameObjectWithTag("Player2").GetComponent<Transform>();
 
-        PlayerScript1 = GameObject.FindGameObjectWithTag("Player2").GetComponent<Player1>();
-        PlayerScript2 = GameObject.FindGameObjectWithTag("Player2").GetComponent<Player1>();
+        playerScript1 = player1.GetComponent<PlayerMovement>();
+        playerScript2 = player2.GetComponent<PlayerMovement>();
 
         
     }
@@ -30,23 +30,30 @@ public class CameraScript : MonoBehaviour
     void LateUpdate()
     { 
         if(ply1Winning){
-            Vector3 desiredPosition = new Vector3(Player1.position.x, -2.4f, -8.88f);
+            Vector3 desiredPosition = new Vector3(player1.position.x, -2.4f, -8.88f);
             Vector3 smoothPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
             transform.position = smoothPosition;   
         }
             
         if(ply2Winning){
-            Vector3 desiredPosition = new Vector3(Player2.position.x, -2.4f, -8.88f);
+            Vector3 desiredPosition = new Vector3(player2.position.x, -2.4f, -8.88f);
             Vector3 smoothPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
             transform.position = smoothPosition;
         }
             
     }
 
-    public bool setPly1Winning(bool state) {
+    public void setPly1Winning(bool state) {
         ply1Winning = state;
     }
-    public bool setPly2Winning(bool state) {
+    public void setPly2Winning(bool state) {
         ply2Winning = state;
+    }
+
+    public bool getPly1Winning() {
+        return ply1Winning;
+    }
+    public bool getPly2Winning() {
+        return ply2Winning;
     }
 }

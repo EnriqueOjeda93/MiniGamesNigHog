@@ -69,9 +69,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 3.4
-  forceJump: 350
+  forceJump: 400
   axe: {fileID: 3475279164754470917, guid: 1a24fc43b3e435343af390c89f9b5774, type: 3}
   player2: {fileID: 0}
+  playerId: 0
 --- !u!61 &113132126
 BoxCollider2D:
   m_ObjectHideFlags: 0

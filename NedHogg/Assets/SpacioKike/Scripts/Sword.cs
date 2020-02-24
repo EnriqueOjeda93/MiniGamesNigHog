@@ -5,21 +5,22 @@ using UnityEngine;
 public class Sword : MonoBehaviour
 {
     [SerializeField]
-    private Player1 player2;
+    private PlayerMovement player2;
     private GameObject playerGameObject;
     private Animator anim;
     private bool impulse = true;
     Rigidbody2D rgb;
+    private int forzeArm = 300;
     void Start()
     {
         playerGameObject = GameObject.FindGameObjectWithTag("Player2");
-        player2 = playerGameObject.GetComponent<Player1>();
+        player2 = playerGameObject.GetComponent<PlayerMovement>();
         anim = GetComponent<Animator>();
         rgb = GetComponent<Rigidbody2D>();
 
 
-        if(player2.getDirection() > 0) rgb.AddForce(new Vector2(1f,0.7f)*100*Time.fixedDeltaTime, ForceMode2D.Impulse);
-            else if(player2.getDirection() < 0) rgb.AddForce(new Vector2(-1f,0.7f)*100*Time.fixedDeltaTime, ForceMode2D.Impulse);
+        if(player2.getDirection() > 0) rgb.AddForce(new Vector2(1f,0.7f)*forzeArm*Time.fixedDeltaTime, ForceMode2D.Impulse);
+            else if(player2.getDirection() < 0) rgb.AddForce(new Vector2(-1f,0.7f)*forzeArm*Time.fixedDeltaTime, ForceMode2D.Impulse);
         
     }
 

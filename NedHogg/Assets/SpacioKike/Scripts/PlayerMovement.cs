@@ -23,19 +23,23 @@ public class PlayerMovement : MonoBehaviour
     private GameObject axe;
 
     
-    [SerializeField]
-    private GameObject player2;
+   // private GameObject player2;
 
     private int direction = 1;
 
     private bool dead;
-    private Vector2 zonaDescanso = new Vector2(5, 5.5f);
+    private Vector2 zonaDescanso = new Vector2(27.23f, 20f);
     [SerializeField]
     private int playerId = 0;
 
     private Rewired.Player player { get { return ReInput.isReady ? ReInput.players.GetPlayer(playerId) : null; } }
 
     private bool aaa = false;
+
+    [SerializeField]
+    private CameraScript cameraState;
+
+    private Vector2 refPlayerReborn;
     void Start()
     {
         anim = GetComponentInChildren<Animator>();
@@ -54,19 +58,24 @@ public class PlayerMovement : MonoBehaviour
             if(move < 0) direction = -1; else if(move > 0) direction = 1; 
 
 
-Debug.Log(player.GetButtonDown("Jump"));
             if(move != 0 && !player.GetButtonDown("Attack1")) {
                 anim.SetBool("Attack2", false);
                 anim.SetBool("Walk", true); 
                 
                 transform.Translate(Mathf.Abs(move)*speed*Time.deltaTime,0,0);
 
+                if(player.GetButton("Attack1") && ground) anim.SetBool("Attack3", true); else anim.SetBool("Attack3", false);
+
             }else {
                 anim.SetBool("Walk", false);
 
-                if(player.GetButtonDown("Attack1") && ground) anim.SetBool("Attack2", true); else anim.SetBool("Attack2", false);
+                if(player.GetButton("Attack1") && ground) anim.SetBool("Attack2", true); else anim.SetBool("Attack2", false);
                 
             }        
+
+            if(!ground && anim.GetBool("Jump") == true && player.GetButton("Attack1")){
+                anim.SetBool("Attack1", true);
+            }
 
             if(player.GetButtonDown("Lanzar") && (Time.time > timepoLanzamiento+tiempo)){
                 tiempo = Time.time;
@@ -103,12 +112,33 @@ Debug.Log(player.GetButtonDown("Jump"));
 
         if(other.gameObject.tag == "ground"){
             ground = true;
+            anim.SetBool("Attack1", false);
             anim.SetBool("Jump", false);
         }
 
 
-        if(other.gameObject.tag == "Sword"){
+        if(other.gameObject.tag == "Sword" && playerId == 0){
             
+            cameraState.setPly2Winning(true);
+            cameraState.setPly1Winning(false);
+
+            refPlayerReborn = GameObject.FindGameObjectWithTag("Player2").GetComponent<Transform>().position;
+            anim.SetBool("Reborn", false);
+            // animacion die
+            dead = true;
+            anim.SetBool("Dead", true);
+            // eseramos un poco y lo transladamos fuera de la pantlla
+            Invoke("goZonaDescanso", 1f);
+            // lo recolocamos en la direccion "X" de su defensa con respecto al otro jugador
+            Invoke("Reborn", 4f);
+        }
+
+        if(other.gameObject.tag == "Axe" && playerId == 1){
+            
+            cameraState.setPly1Winning(true);
+            cameraState.setPly2Winning(false);
+
+            refPlayerReborn = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>().position;
             anim.SetBool("Reborn", false);
             // animacion die
             dead = true;
@@ -133,8 +163,12 @@ Debug.Log(player.GetButtonDown("Jump"));
     private void Reborn(){
         dead = false;
         anim.SetBool("Reborn", true);
+        if(playerId == 0){
+            transform.position = new Vector2(refPlayerReborn.x - 2f, 0);
+        } else if(playerId == 1){
+            transform.position = new Vector2(refPlayerReborn.x + 2f, 0);
+        }
 
-        transform.position = new Vector2(player2.transform.position.x - 2f, player2.transform.position.y);
     }
 
 
