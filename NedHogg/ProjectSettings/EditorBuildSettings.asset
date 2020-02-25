@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Dani/Menu.unity
+    guid: 5906dc1de4807c8429d6b92b1e6a1b3b
+  - enabled: 1
+    path: Assets/Dani/Credits.unity
+    guid: 4b3f409551f66bf45b477df7d638073c
+  - enabled: 1
     path: Assets/Dani/Map_01.unity
     guid: 657bbdab7e1fbfa42a3559bda065e7a1
   m_configObjects: {}
