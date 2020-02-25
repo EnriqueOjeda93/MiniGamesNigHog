@@ -34,7 +34,6 @@ public class PlayerMovement : MonoBehaviour
 
     private Rewired.Player player { get { return ReInput.isReady ? ReInput.players.GetPlayer(playerId) : null; } }
 
-    private bool aaa = false;
 
     [SerializeField]
     private CameraScript cameraState;
@@ -46,8 +45,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool initPaded = false;
 
-    [SerializeField]
-    private GameObject boxDamg;
+
     void Start()
     {
         anim = GetComponentInChildren<Animator>();
@@ -55,10 +53,11 @@ public class PlayerMovement : MonoBehaviour
         dead = false;
     }
 
-    void Update()
-    {
+    void FixedUpdate(){
+
+        
         if(!dead){
-            
+            Debug.Log(initPaded);
             move = player.GetAxis("Movement");
 
             if(move < 0) transform.localRotation = Quaternion.Euler(0, 180, 0); else if(move > 0) transform.localRotation = Quaternion.Euler(0, 0, 0); 
@@ -70,31 +69,40 @@ public class PlayerMovement : MonoBehaviour
                 anim.SetBool("Attack2", false);
                 anim.SetBool("Walk", true); 
                 
-                transform.Translate(Mathf.Abs(move)*speed*Time.deltaTime,0,0);
+                //transform.Translate(Mathf.Abs(move)*speed*Time.deltaTime,0,0);
+                rb.AddForce(new Vector2(move*speed*Time.deltaTime, 0), ForceMode2D.Impulse);
 
                 if(player.GetButton("Attack1") && ground) {
                     anim.SetBool("Attack3", true); 
-                    boxDamg.SetActive(true);
                 } else {
-                    boxDamg.SetActive(false);
                     anim.SetBool("Attack3", false);
                 }
+
+                 if (rb.velocity.x > 5f || rb.velocity.x < (5f * -1))
+                {
+                    if (rb.velocity.x > 0)
+                    {
+                        rb.velocity = new Vector2(5f, rb.velocity.y);
+                    }
+                    else
+                    {
+                        rb.velocity = new Vector2(-5f, rb.velocity.y);
+                    }
+                }
+
 
             }else {
                 anim.SetBool("Walk", false);
 
                 if(player.GetButton("Attack1") && ground) {
                     anim.SetBool("Attack2", true); 
-                    boxDamg.SetActive(true);
                     } else {
-                        boxDamg.SetActive(false);
                         anim.SetBool("Attack2", false);
                     }
             }        
 
             if(!ground && anim.GetBool("Jump") == true && player.GetButton("Attack1")){
                 anim.SetBool("Attack1", true);
-                boxDamg.SetActive(true);
             }
 
             if(player.GetButtonDown("Lanzar") && (Time.time > timepoLanzamiento+tiempo)){
@@ -109,21 +117,18 @@ public class PlayerMovement : MonoBehaviour
             if(player.GetButtonDown("Jump") && ground){
                 ground = false;
                 anim.SetBool("Jump", true);
-                aaa = true;
+                rb.AddForce(Vector2.up*forceJump*Time.fixedDeltaTime, ForceMode2D.Impulse);
+            }
+            
+            if(rb.velocity.y < -5f){
+                rb.velocity = new Vector2(rb.velocity.x, -5f);
             }
         }
     }
 
-    void FixedUpdate(){
-        if(aaa){
-            aaa = false;
-            rb.AddForce(Vector2.up*forceJump*Time.fixedDeltaTime, ForceMode2D.Impulse);
-        }  
-    }
-
     void OnTriggerExit2D(Collider2D other) {
         if(other.gameObject.tag == "ground"){
-        ground = false;
+            ground = false;
         }
     }
     
@@ -131,8 +136,7 @@ public class PlayerMovement : MonoBehaviour
     {
 
         if(other.gameObject.tag == "ground"){
-            ground = true;
-            boxDamg.SetActive(false);
+            ground = true; 
             anim.SetBool("Attack1", false);
             anim.SetBool("Jump", false);
         }
@@ -150,15 +154,6 @@ public class PlayerMovement : MonoBehaviour
             paredDer.SetActive(false);
             paredIzq.SetActive(true);
             initPaded = true;
-            configureDead(true, false);
-        }
-
-        if(other.gameObject.tag == "PaderDer" && playerId == 0 && initPaded){
-            initPaded = true;
-            configureDead(false, true);
-        }
-
-        if(other.gameObject.tag == "ParedIzq" && playerId == 1 && initPaded){
             configureDead(true, false);
         }
 
@@ -182,6 +177,18 @@ public class PlayerMovement : MonoBehaviour
                 paredDer.SetActive(true);
                 paredIzq.SetActive(true);
             }
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D other) {
+
+        if(other.gameObject.tag == "PaderDer" && playerId == 0 && initPaded){
+            initPaded = true;
+            configureDead(false, true);
+        }
+
+        if(other.gameObject.tag == "ParedIzq" && playerId == 1 && initPaded){
+            configureDead(true, false);
         }
     }
 
