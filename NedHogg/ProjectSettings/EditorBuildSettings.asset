@@ -14,4 +14,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Dani/Map_01.unity
     guid: 657bbdab7e1fbfa42a3559bda065e7a1
+  - enabled: 1
+    path: Assets/Dani/Player1Win.unity
+    guid: c1b736cd85186a245986ace74205e317
+  - enabled: 1
+    path: Assets/Dani/Player2Win.unity
+    guid: 5c894911b31bde443a3ffb5e32c12ffc
   m_configObjects: {}
