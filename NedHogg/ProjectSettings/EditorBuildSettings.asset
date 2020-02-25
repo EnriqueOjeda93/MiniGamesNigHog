@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Dani/Map_01.unity
+    guid: 657bbdab7e1fbfa42a3559bda065e7a1
   m_configObjects: {}
